@@ -70,7 +70,7 @@ public class GuiClient extends Application {
 
 	}
 	public void handleAIButton() throws Exception {
-		primaryStage.setScene(sceneMap.get("playerScreen"));
+		primaryStage.setScene(sceneMap.get("player"));
 	}
 
 	public void handleRulesButton() throws Exception {
