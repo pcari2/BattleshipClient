@@ -217,7 +217,7 @@ public class GuiClient extends Application {
 			return playerScreen;
 		}
 
-//		private void enemyMove() {
+//		private void enemyMove() { your mom
 //			while (enemyTurn) {
 //				int x = random.nextInt(10);
 //				int y = random.nextInt(10);
