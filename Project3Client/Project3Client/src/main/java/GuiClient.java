@@ -204,7 +204,7 @@ public class GuiClient extends Application {
 //					if (--shipsToPlace == 0) {
 //						startGame();
 //					}
-//				}
+// poopy				}
 			});
 
 			VBox vbox = new VBox(50, enemyBoard, playerBoard);
