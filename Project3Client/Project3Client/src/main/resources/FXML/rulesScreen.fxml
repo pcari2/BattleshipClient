@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="MyController"
+            stylesheets="../styles/styles3.css"
+            prefHeight="400.0" prefWidth="600.0"
+            styleClass="battleship-start">
+
+        <top>
+            <HBox alignment="CENTER_RIGHT" styleClass="button-container">
+                <Button fx:id="backButton" text="Back" styleClass="back-button" onAction="#handleBackButton"/>
+            </HBox>
+        </top>
+
+        <center>
+            <HBox alignment="CENTER" spacing="20">
+                <Label fx:id="titleLabel" text="RULES" styleClass="title-label" />
+                <Label fx:id="ruleLabel" text="put all the rules here!" styleClass="title-rules" />
+            </HBox>
+        </center>
+
+</BorderPane>

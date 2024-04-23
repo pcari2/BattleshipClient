@@ -23,6 +23,7 @@ public class GuiClient extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
 		this.primaryStage = primaryStage;
 
 		sceneMap = new HashMap<String, Scene>(); // All the scenes
@@ -30,11 +31,21 @@ public class GuiClient extends Application {
 			// Scene Establishing
 			sceneMap = new HashMap<String, Scene>(); // All the scenes
 
-			loadScene("start", "/FXML/startScreen.fxml");
-			loadScene("gameplay", "/FXML/startScreen.fxml");
-			setScene("start");
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/startScreen.fxml"));
+			Parent root = loader.load();
+
+			Scene scene = new Scene(root, 800, 500);
+
+			scene.getStylesheets().add(getClass().getResource("/styles/styles1.css").toExternalForm());
+
+			sceneMap.put("start", scene);
+//			sceneMap.get("start").setRoot(root);
+
+			primaryStage.setScene(sceneMap.get("start"));
 			primaryStage.setTitle("BattleShip");
 			primaryStage.show();
+
+
 			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent t) {
@@ -45,19 +56,6 @@ public class GuiClient extends Application {
 
 //			clientConnection.start();
 	}
-
-	private void loadScene(String name, String fxmlPath) throws Exception {
-		Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-		Scene scene = new Scene(root, 500, 500);
-		sceneMap.put(name, scene);
-		sceneMap.get(name).setRoot(root);
-	}
-
-	private void setScene(String name) {
-		primaryStage.setScene(sceneMap.get(name));
-		primaryStage.setTitle("Battleship");
-	}
-
 
 
 }

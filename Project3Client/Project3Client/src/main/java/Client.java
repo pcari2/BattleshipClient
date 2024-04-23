@@ -45,28 +45,28 @@ public class Client extends Thread{
 		
 		while(true) {
 			 
-			try {
-				Message message = (Message) in.readObject(); // reads in message
-
-				// if the message is list of names, or a leave message update Connected Users
-				if (message.getType() == Message.MessageType.LIST_OF_NAMES || message.getType() == Message.MessageType.LEAVE ) {
-					connectedUsernames = message.getReceivers();
-				}
-
-				// If username is already taken than make it true
-				if (message.getContent().equals("Username is already taken")) {
-					usernameChangeTaken = true;
-				}
-
-				// If they're sending a username back to the Client, else then upload to ClientGUI
-				if (message.getType() == Message.MessageType.USER_ID_CREATE && !usernameChangeTaken) {
-					username = message.getContent();
-				}
-				else {
-					callback.accept(message);
-				}
-			}
-			catch(Exception e) {}
+//			try {
+//				Message message = (Message) in.readObject(); // reads in message
+//
+//				// if the message is list of names, or a leave message update Connected Users
+//				if (message.getType() == Message.MessageType.LIST_OF_NAMES || message.getType() == Message.MessageType.LEAVE ) {
+//					connectedUsernames = message.getReceivers();
+//				}
+//
+//				// If username is already taken than make it true
+//				if (message.getContent().equals("Username is already taken")) {
+//					usernameChangeTaken = true;
+//				}
+//
+//				// If they're sending a username back to the Client, else then upload to ClientGUI
+//				if (message.getType() == Message.MessageType.USER_ID_CREATE && !usernameChangeTaken) {
+//					username = message.getContent();
+//				}
+//				else {
+//					callback.accept(message);
+//				}
+//			}
+//			catch(Exception e) {}
 		}
 	
     }

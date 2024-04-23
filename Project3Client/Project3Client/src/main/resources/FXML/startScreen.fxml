@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane  xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="MyController"
+            stylesheets="../styles/styles1.css"
+            prefHeight="400.0" prefWidth="600.0"
+            styleClass="battleship-start">
+
+    <top>
+        <HBox alignment="CENTER_RIGHT" styleClass="button-container">
+            <Button fx:id="rulesButton" text="Rules" styleClass="rules-button" onAction="#handleRulesButton"/>
+        </HBox>
+    </top>
+
+    <center>
+
+        <VBox alignment="CENTER" spacing="20">
+            <Label fx:id="titleLabel" text="BATTLESHIP" styleClass="title-label" />
+
+            <HBox alignment="CENTER" spacing="20">
+                <Button fx:id="playAgainstPlayerButton" text="Play Against Player" onAction="#handlePlayerButton" styleClass="play-button" />
+                <Button fx:id="playAgainstAIButton" text="Play Against AI" onAction="#handleAIButton" styleClass="play-button" />
+            </HBox>
+        </VBox>
+
+    </center>
+
+
+
+</BorderPane>
