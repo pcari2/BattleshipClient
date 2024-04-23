@@ -54,7 +54,7 @@ public class Board extends Parent {
                 }
 
             }
-            // if ship is not vertical check x values
+            // if ship is not vertical check x values hey guys
             else {
                 for (int i = x; i < x + length; i++) {
                     Cell cell = getCell(i, y);
