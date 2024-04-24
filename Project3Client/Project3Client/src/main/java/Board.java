@@ -168,7 +168,7 @@ public class Board extends Parent {
             setFill(Color.TRANSPARENT);
             setStroke(Color.BLACK);
 
-            Color lightColor = Color.rgb(0, 0, 0, 0.3);
+            Color lightColor = Color.rgb(255, 255, 255, 0.6);
             setFill(lightColor);
         }
 

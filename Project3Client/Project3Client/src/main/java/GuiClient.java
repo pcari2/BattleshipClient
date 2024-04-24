@@ -1,4 +1,5 @@
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -15,10 +16,12 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.scene.shape.Rectangle;
 
 public class GuiClient extends Application {
 
@@ -33,6 +36,7 @@ public class GuiClient extends Application {
 
 	private boolean enemyTurn = false;
 	private Random random = new Random();
+	private Scene previousScene;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -69,6 +73,10 @@ public class GuiClient extends Application {
 	}
 
 	public void handlePlayerButton() throws Exception {
+
+
+
+
 		primaryStage.setScene(sceneMap.get("player"));
 
 	}
@@ -82,8 +90,8 @@ public class GuiClient extends Application {
 		primaryStage.setMaximized(true);
 	}
 
-	public void handleBackButton() throws Exception {
-		primaryStage.setScene(sceneMap.get("startScreen"));
+	public void handleBackButton(Scene previousScene) throws Exception {
+		primaryStage.setScene(previousScene);
 		primaryStage.setMaximized(true);
 	}
 
@@ -100,24 +108,8 @@ public class GuiClient extends Application {
 		rulesButton.getStyleClass().add("rules-button");
 		rulesButton.setOnAction(event -> {
 			try {
+				previousScene = primaryStage.getScene();
 				handleRulesButton();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		});
-
-		HBox topContainer = new HBox(rulesButton);
-		topContainer.setAlignment(Pos.CENTER_RIGHT);
-		root.setTop(topContainer);
-
-		Label titleLabel = new Label("BATTLESHIP");
-		titleLabel.getStyleClass().add("title-label");
-
-		Button playAgainstPlayerButton = new Button("Play Against Player");
-		playAgainstPlayerButton.getStyleClass().add("play-button");
-		playAgainstPlayerButton.setOnAction(event -> {
-			try {
-				handlePlayerButton();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -133,7 +125,30 @@ public class GuiClient extends Application {
 			}
 		});
 
-		HBox playButtons = new HBox(20, playAgainstAIButton, playAgainstPlayerButton);
+		HBox topContainer = new HBox(rulesButton);
+		topContainer.setAlignment(Pos.CENTER_RIGHT);
+		root.setTop(topContainer);
+
+		Label titleLabel = new Label("BATTLESHIP");
+		titleLabel.getStyleClass().add("title-label");
+
+		Button playAgainstPlayerButton = new Button("Play Against Player");
+		playAgainstPlayerButton.getStyleClass().add("play-button");
+		playAgainstPlayerButton.setOnAction(event -> {
+			playAgainstPlayerButton.setText("Waiting for player...");
+
+			playAgainstPlayerButton.setDisable(true);
+			playAgainstAIButton.setDisable(true);
+			rulesButton.setDisable(true);
+
+			try {
+
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		HBox playButtons = new HBox(20, playAgainstPlayerButton, playAgainstAIButton);
 		playButtons.setAlignment(Pos.CENTER);
 
 		VBox centerContainer = new VBox(20, titleLabel, playButtons);
@@ -160,9 +175,10 @@ public class GuiClient extends Application {
 		topBox.getStyleClass().add("button-container");
 		Button backButton = new Button("Back");
 		backButton.getStyleClass().add("back-button");
+
 		backButton.setOnAction(event -> {
 			try {
-				handleBackButton();
+				handleBackButton(previousScene);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -171,15 +187,30 @@ public class GuiClient extends Application {
 
 		root.setTop(topBox);
 
-		HBox centerBox = new HBox(20);
-		centerBox.setAlignment(Pos.CENTER);
-		Label titleLabel = new Label("RULES");
-		titleLabel.getStyleClass().add("title-label");
-		Label ruleLabel = new Label("Put all the rules here!");
-		ruleLabel.getStyleClass().add("title-rules");
-		centerBox.getChildren().addAll(titleLabel, ruleLabel);
+		StackPane centerStackPane = new StackPane();
+		centerStackPane.setAlignment(Pos.TOP_CENTER);
 
-		root.setCenter(centerBox);
+		Rectangle rectangle = new Rectangle(600, 700);
+		rectangle.getStyleClass().add("rules-rectangle");
+
+		Label titleLabel = new Label("HOW TO PLAY");
+		titleLabel.getStyleClass().add("title-label");
+		Label ruleLabel = new Label("\nEach player deploys his ships (of lengths varying\nfrom 2 to 5 squares) secretly on a square grid.\n\n" +
+										"Then each player alternates shooting at the\nother's grid by clicking a location.\n\n" +
+										"Each move is classified as a Hit! or Miss!\nYou try to deduce where the enemy ships are and sink \nthem. " +
+										"\n\nFirst to do so wins.\n\n" +
+										"There are 5 ships, all spanning 5-2 spaces\n\n +" +
+										"Press Play Against Player to find a player\n\n" +
+										"Press Play Against AI to play against a computer");
+
+		ruleLabel.getStyleClass().add("title-rules");
+
+		VBox rulesList = new VBox(titleLabel, ruleLabel);
+		rulesList.setAlignment(Pos.TOP_CENTER);
+
+		centerStackPane.getChildren().addAll(rectangle, rulesList);
+
+		root.setCenter(centerStackPane);
 		Scene rulesScene = new Scene(root);
 		rulesScene.getStylesheets().add("/styles/styles3.css");
 
@@ -193,6 +224,20 @@ public class GuiClient extends Application {
 
 		root.setPrefSize(600, 800);
 		root.getStyleClass().add("battleship-start");
+
+		Button rulesButton =  new Button("Rules");
+		rulesButton.getStyleClass().add("rules-button");
+		rulesButton.setOnAction(event -> {
+			previousScene = primaryStage.getScene();
+
+			try {
+				handleRulesButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+
 
 		enemyBoard = new Board(true, event -> {
 //				if (!running)
@@ -225,13 +270,18 @@ public class GuiClient extends Application {
 // poopy				}
 		});
 
+		HBox topContainer = new HBox(rulesButton);
+		topContainer.setAlignment(Pos.CENTER_RIGHT);
+		root.setTop(topContainer);
+
 		enemyBoard.setStyle("-fx-background-color: transparent;");
 		playerBoard.setStyle("-fx-background-color: transparent;");
 
-		HBox hbox = new HBox(200, enemyBoard, playerBoard);
-		hbox.setAlignment(Pos.CENTER);
+		VBox vbox = new VBox(35, enemyBoard, playerBoard);
+		vbox.setAlignment(Pos.TOP_CENTER);
 
-		root.setCenter(hbox);
+		root.setCenter(vbox);
+
 
 		Screen screen = Screen.getPrimary();
 		double screenWidth = screen.getBounds().getWidth();
@@ -243,6 +293,8 @@ public class GuiClient extends Application {
 
 		return playerScreen;
 	}
+
+
 
 //		private void enemyMove() {
 //			while (enemyTurn) {

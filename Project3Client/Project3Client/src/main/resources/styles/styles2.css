@@ -1,5 +1,5 @@
 .battleship-start {
-    -fx-background-image:url("/images/sea-background.jpg");
+    -fx-background-image:url("/images/play-screen.jpg");
     -fx-background-size: cover;
     -fx-background-position: center;
 }
@@ -8,4 +8,13 @@
     -fx-font-size:50px;
     -fx-text-fill: white;
     -fx-font-family: Impact;
+}
+
+.rules-button {
+    -fx-min-width: 150px;
+    -fx-min-height: 10px;
+    -fx-font-size: 20px;
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-color: white;
+    -fx-text-fill: white;
 }
