@@ -1,4 +1,3 @@
-
 import java.util.HashMap;
 import java.util.Random;
 
@@ -55,13 +54,13 @@ public class GuiClient extends Application {
 		primaryStage.show();
 
 
-			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent t) {
-					Platform.exit();
-					System.exit(0);
-				}
-			});
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent t) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
 
 //			clientConnection.start();
 	}
@@ -145,12 +144,12 @@ public class GuiClient extends Application {
 		topBox.getStyleClass().add("button-container");
 		Button backButton = new Button("Back");
 		backButton.setOnAction(event -> {
-            try {
-                handleBackButton();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+			try {
+				handleBackButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
 		topBox.getChildren().add(backButton);
 
 		root.setTop(topBox);
@@ -172,85 +171,82 @@ public class GuiClient extends Application {
 	}
 
 	private Scene createPlayerScene() {
-			BorderPane root = new BorderPane();
-			root.setPrefSize(600, 800);
-			root.getStyleClass().add("battle-start");
+		BorderPane root = new BorderPane();
+		root.setPrefSize(600, 800);
+		root.getStyleClass().add("battleship-start");
 
-			enemyBoard = new Board(true, event -> {
-//				if (!running)
-//					return;
-//
-//				Board.Cell cell = (Board.Cell) event.getSource();
-//				if (cell.wasShot)
-//					return;
-//
-//				enemyTurn = !cell.shoot();
-//
-//				if (enemyBoard.ships == 0) {
-//					System.out.println("YOU WIN");
-//					System.exit(0);
-//				}
-//
-//				if (enemyTurn)
-//					enemyMove();
-			});
+		enemyBoard = new Board(true, event -> {
+			if (!running)
+				return;
 
-			playerBoard = new Board(false, event -> {
-//				if (running)
-//					return;
-//
-//				Board.Cell cell = (Board.Cell) event.getSource();
-//				if (playerBoard.placeShip(new Ship(shipsToPlace, event.getButton() == MouseButton.PRIMARY), cell.x, cell.y)) {
-//					if (--shipsToPlace == 0) {
-//						startGame();
-//					}
-// poopy				}
-			});
+			Board.Cell cell = (Board.Cell) event.getSource();
+			if (cell.wasShot)
+				return;
 
-			VBox vbox = new VBox(50, enemyBoard, playerBoard);
-			vbox.setAlignment(Pos.CENTER);
+			enemyTurn = !cell.shoot();
 
-			root.setCenter(vbox);
+			if (enemyBoard.ships == 0) {
+				System.out.println("YOU WIN");
+				System.exit(0);
+			}
 
-			Scene playerScreen = new Scene(root);
+			if (enemyTurn)
+				enemyMove();
+		});
 
-			return playerScreen;
-		}
+		playerBoard = new Board(false, event -> {
+			if (running)
+				return;
 
-//		private void enemyMove() {
-//			while (enemyTurn) {
-//				int x = random.nextInt(10);
-//				int y = random.nextInt(10);
-//
-//				Board.Cell cell = playerBoard.getCell(x, y);
-//				if (cell.wasShot)
-//					continue;
-//
-//				enemyTurn = cell.shoot();
-//
-//				if (playerBoard.ships == 0) {
-//					System.out.println("YOU LOSE");
-//					System.exit(0);
-//				}
-//			}
-//		}
+			Board.Cell cell = (Board.Cell) event.getSource();
+			if (playerBoard.placeShip(new Ship(shipsToPlace, event.getButton() == MouseButton.PRIMARY), cell.x, cell.y)) {
+				if (--shipsToPlace == 0) {
+					startGame();
+				}
+			}
+		});
 
-//		private void startGame() {
-//			// place enemy ships
-//			int type = 5;
-//
-//			while (type > 0) {
-//				int x = random.nextInt(10);
-//				int y = random.nextInt(10);
-//
-//				if (enemyBoard.placeShip(new Ship(type, Math.random() < 0.5), x, y)) {
-//					type--;
-//				}
-//			}
-//
-//			running = true;
-//		} // your mmom
+		VBox vbox = new VBox(50, enemyBoard, playerBoard);
+		vbox.setAlignment(Pos.CENTER);
+
+		root.setCenter(vbox);
+
+		Scene playerScreen = new Scene(root);
+
+		return playerScreen;
 	}
 
+	private void enemyMove() {
+		while (enemyTurn) {
+			int x = random.nextInt(10);
+			int y = random.nextInt(10);
 
+			Board.Cell cell = playerBoard.getCell(x, y);
+			if (cell.wasShot)
+				continue;
 
+			enemyTurn = cell.shoot();
+
+			if (playerBoard.ships == 0) {
+				System.out.println("YOU LOSE");
+				System.exit(0);
+			}
+		}
+	}
+
+	private void startGame() {
+		// place enemy ships
+		int type = 5;
+
+		while (type > 0) {
+			int x = random.nextInt(10);
+			int y = random.nextInt(10);
+
+			if (enemyBoard.placeShip(new Ship(type, Math.random() < 0.5), x, y)) {
+				type--;
+			}
+		}
+
+		running = true;
+	}
+}
