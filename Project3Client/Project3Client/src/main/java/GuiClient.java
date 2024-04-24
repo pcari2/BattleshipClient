@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -27,16 +28,19 @@ public class GuiClient extends Application {
 
 
 	private HashMap<String, Scene> sceneMap;
-	Client clientConnection;
 	private Stage primaryStage;
-	private boolean running = false;
 	private Board enemyBoard, playerBoard;
+	private Scene previousScene;
 
+	Client clientConnection;
+	ListView<String> chatListView;
+
+//-----------------------------------------------------------
+	// Unused
+	private boolean running = false;
 	private int shipsToPlace = 5;
-
 	private boolean enemyTurn = false;
 	private Random random = new Random();
-	private Scene previousScene;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -60,6 +64,9 @@ public class GuiClient extends Application {
 		primaryStage.setTitle("Battleship");
 		primaryStage.show();
 
+		clientConnection = new Client(data-> {
+			chatListView.getItems().add(data.toString());
+		});
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -294,7 +301,9 @@ public class GuiClient extends Application {
 		return playerScreen;
 	}
 
+//--------------------------------------------------------------
 
+//Unused For now
 
 //		private void enemyMove() {
 //			while (enemyTurn) {
