@@ -26,22 +26,25 @@ import javafx.scene.shape.Rectangle;
 
 public class GuiClient extends Application {
 
-
 	private HashMap<String, Scene> sceneMap;
 	private Stage primaryStage;
 	private Board enemyBoard, playerBoard;
 	private Scene previousScene;
+
+//-----------------------------------------------------------
 
 	Client clientConnection;
 	ListView<String> chatListView;
 	TextField chatInput;
 
 //-----------------------------------------------------------
-	// Unused
+
 	private boolean running = false;
 	private int shipsToPlace = 5;
 	private boolean enemyTurn = false;
 	private Random random = new Random();
+
+//------------------------------------------------------------
 
 	public static void main(String[] args) {
 		launch(args);
@@ -84,7 +87,7 @@ public class GuiClient extends Application {
 			}
 		});
 
-//			clientConnection.start();
+		clientConnection.start();
 	}
 
 	public void handlePlayerButton() throws Exception {
@@ -110,6 +113,11 @@ public class GuiClient extends Application {
 		sceneMap.remove("player");
 		Scene newScene = createPlayerScene();
 		sceneMap.put("player", newScene);
+
+		running = false;
+		shipsToPlace = 5;
+		enemyTurn = false;
+
 		primaryStage.setScene(sceneMap.get("startScreen"));
 		primaryStage.setMaximized(true);
 	}
@@ -345,9 +353,12 @@ public class GuiClient extends Application {
 		returnToLobbyButton.getStyleClass().add("back-button");
 
 
-		returnToLobbyButton.setOnAction(e -> {
-			primaryStage.setScene(sceneMap.get("startScreen"));
-			primaryStage.setMaximized(true);
+		returnToLobbyButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		});
 		Label winLabel = new Label("YOU WIN");
 		winLabel.getStyleClass().add("title-label2");
@@ -377,9 +388,12 @@ public class GuiClient extends Application {
 		Button returnToLobbyButton = new Button("Return to Lobby");
 		returnToLobbyButton.getStyleClass().add("back-button");
 
-		returnToLobbyButton.setOnAction(e -> {
-			primaryStage.setScene(sceneMap.get("startScreen"));
-			primaryStage.setMaximized(true);
+		returnToLobbyButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		});
 		Label loseLabel = new Label("YOU LOSE");
 		loseLabel.getStyleClass().add("title-label2");
