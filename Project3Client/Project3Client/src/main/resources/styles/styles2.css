@@ -1,5 +1,7 @@
 .battleship-start {
-    -fx-background-color: #2f62e8;
+    -fx-background-image:url("/images/sea-background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
 }
 
 .title-label {

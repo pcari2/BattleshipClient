@@ -16,6 +16,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -51,39 +52,48 @@ public class GuiClient extends Application {
 		sceneMap.put("player", playerScene);
 
 		primaryStage.setScene(startScene);
+		primaryStage.setMaximized(true);
 		primaryStage.setTitle("Battleship");
 		primaryStage.show();
 
 
-			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-				@Override
-				public void handle(WindowEvent t) {
-					Platform.exit();
-					System.exit(0);
-				}
-			});
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent t) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
 
 //			clientConnection.start();
 	}
 
 	public void handlePlayerButton() throws Exception {
+		primaryStage.setScene(sceneMap.get("player"));
 
 	}
 	public void handleAIButton() throws Exception {
-		primaryStage.setScene(sceneMap.get("playerScreen"));
+		primaryStage.setScene(sceneMap.get("player"));
+		primaryStage.setMaximized(true);
 	}
 
 	public void handleRulesButton() throws Exception {
 		primaryStage.setScene(sceneMap.get("rulesScreen"));
+		primaryStage.setMaximized(true);
 	}
 
 	public void handleBackButton() throws Exception {
 		primaryStage.setScene(sceneMap.get("startScreen"));
+		primaryStage.setMaximized(true);
 	}
 
 	private Scene createStartScene() {
 		BorderPane root = new BorderPane();
-		root.setPrefSize(600, 400);
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
 		root.getStyleClass().add("battleship-start");
 
 		Button rulesButton =  new Button("Rules");
@@ -138,19 +148,25 @@ public class GuiClient extends Application {
 
 	private Scene createRulesScene() {
 		BorderPane root = new BorderPane();
-		root.setPrefSize(600, 400);
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+
 		root.getStyleClass().add("battleship-start");
 
 		HBox topBox = new HBox();
 		topBox.getStyleClass().add("button-container");
 		Button backButton = new Button("Back");
+		backButton.getStyleClass().add("back-button");
 		backButton.setOnAction(event -> {
-            try {
-                handleBackButton();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+			try {
+				handleBackButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
 		topBox.getChildren().add(backButton);
 
 		root.setTop(topBox);
@@ -172,11 +188,13 @@ public class GuiClient extends Application {
 	}
 
 	private Scene createPlayerScene() {
-			BorderPane root = new BorderPane();
-			root.setPrefSize(600, 800);
-			root.getStyleClass().add("battle-start");
 
-			enemyBoard = new Board(true, event -> {
+		BorderPane root = new BorderPane();
+
+		root.setPrefSize(600, 800);
+		root.getStyleClass().add("battleship-start");
+
+		enemyBoard = new Board(true, event -> {
 //				if (!running)
 //					return;
 //
@@ -193,9 +211,9 @@ public class GuiClient extends Application {
 //
 //				if (enemyTurn)
 //					enemyMove();
-			});
+		});
 
-			playerBoard = new Board(false, event -> {
+		playerBoard = new Board(false, event -> {
 //				if (running)
 //					return;
 //
@@ -205,17 +223,26 @@ public class GuiClient extends Application {
 //						startGame();
 //					}
 // poopy				}
-			});
+		});
 
-			VBox vbox = new VBox(50, enemyBoard, playerBoard);
-			vbox.setAlignment(Pos.CENTER);
+		enemyBoard.setStyle("-fx-background-color: transparent;");
+		playerBoard.setStyle("-fx-background-color: transparent;");
 
-			root.setCenter(vbox);
+		HBox hbox = new HBox(200, enemyBoard, playerBoard);
+		hbox.setAlignment(Pos.CENTER);
 
-			Scene playerScreen = new Scene(root);
+		root.setCenter(hbox);
 
-			return playerScreen;
-		}
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+		Scene playerScreen = new Scene(root);
+		playerScreen.getStylesheets().add("/styles/styles2.css");
+
+		return playerScreen;
+	}
 
 //		private void enemyMove() {
 //			while (enemyTurn) {
@@ -250,7 +277,4 @@ public class GuiClient extends Application {
 //
 //			running = true;
 //		} // your mmom
-	}
-
-
-
+}

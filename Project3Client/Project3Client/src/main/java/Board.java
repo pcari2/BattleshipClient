@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 
 
 public class Board extends Parent {
@@ -32,7 +33,9 @@ public class Board extends Parent {
             }
             // Adds row to list of rows
             rows.getChildren().add(row);
+
         }
+
         // Add rows to the Parent to display it
         getChildren().add(rows);
     }
@@ -162,8 +165,11 @@ public class Board extends Parent {
             this.x = x;
             this.y = y;
             this.board = board;
-            setFill(Color.LIGHTGRAY);
+            setFill(Color.TRANSPARENT);
             setStroke(Color.BLACK);
+
+            Color lightColor = Color.rgb(0, 0, 0, 0.3);
+            setFill(lightColor);
         }
 
         public boolean shoot() {

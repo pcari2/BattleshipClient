@@ -11,11 +11,15 @@
 }
 
 .battleship-start {
-    -fx-background-color: #2f62e8;
+    -fx-background-image:url("/images/battleship-rules.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
 }
 
 .back-button {
-    -fx-padding: 10px 20px;
-    -fx-min-width: 150px;
-    -fx-min-height: 20px;
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-color: white;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-min-width: 50px;
 }
