@@ -102,7 +102,7 @@ public class GuiClient extends Application {
 		primaryStage.setMaximized(true);
 	}
 
-	public void handleLeaveGameButton() throws Exception {
+	public void handleLeaveGameButton() throws Exception { // your mom
 		sceneMap.remove("player");
 		Scene newScene = createPlayerScene();
 		sceneMap.put("player", newScene);
