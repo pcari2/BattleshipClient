@@ -206,9 +206,9 @@ public class GuiClient extends Application {
 										"Then each player alternates shooting at the\nother's grid by clicking a location.\n\n" +
 										"Each move is classified as a Hit! or Miss!\nYou try to deduce where the enemy ships are and sink \nthem. " +
 										"\n\nFirst to do so wins.\n\n" +
-										"There are 5 ships, all spanning 5-2 spaces\n\n +" +
-										"Press Play Against Player to find a player\n\n" +
-										"Press Play Against AI to play against a computer");
+										"There are 5 ships, all spanning 5-2 spaces.\n\n" +
+										"Press Play Against Player to find a player.\n\n" +
+										"Press Play Against AI to play against a computer.");
 
 		ruleLabel.getStyleClass().add("title-rules");
 
@@ -233,7 +233,11 @@ public class GuiClient extends Application {
 		root.getStyleClass().add("battleship-start");
 
 		Button rulesButton =  new Button("Rules");
+		Button leaveGameButton = new Button("Leave Game");
+
 		rulesButton.getStyleClass().add("rules-button");
+		leaveGameButton.getStyleClass().add("rules-button");
+
 		rulesButton.setOnAction(event -> {
 			previousScene = primaryStage.getScene();
 
@@ -242,6 +246,12 @@ public class GuiClient extends Application {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+		});
+
+		leaveGameButton.setOnAction(e -> {
+			primaryStage.setScene(sceneMap.get("startScreen"));
+
+
 		});
 
 
