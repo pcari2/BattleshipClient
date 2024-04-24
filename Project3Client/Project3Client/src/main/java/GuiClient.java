@@ -34,6 +34,7 @@ public class GuiClient extends Application {
 
 	Client clientConnection;
 	ListView<String> chatListView;
+	TextField chatInput;
 
 //-----------------------------------------------------------
 	// Unused
@@ -49,6 +50,9 @@ public class GuiClient extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
+		chatListView = new ListView<>();
+		chatListView.getStyleClass().add("chatListView");
+
 		sceneMap = new HashMap<String, Scene>(); // All the scenes
 
 		Scene startScene = createStartScene();
@@ -99,6 +103,14 @@ public class GuiClient extends Application {
 
 	public void handleBackButton(Scene previousScene) throws Exception {
 		primaryStage.setScene(previousScene);
+		primaryStage.setMaximized(true);
+	}
+
+	public void handleLeaveGameButton() throws Exception { // your mom
+		sceneMap.remove("player");
+		Scene newScene = createPlayerScene();
+		sceneMap.put("player", newScene);
+		primaryStage.setScene(sceneMap.get("startScreen"));
 		primaryStage.setMaximized(true);
 	}
 
@@ -248,10 +260,12 @@ public class GuiClient extends Application {
 			}
 		});
 
-		leaveGameButton.setOnAction(e -> {
-			primaryStage.setScene(sceneMap.get("startScreen"));
-
-
+		leaveGameButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		});
 
 
@@ -289,8 +303,8 @@ public class GuiClient extends Application {
 				}
 		});
 
-		HBox topContainer = new HBox(rulesButton);
-		topContainer.setAlignment(Pos.CENTER_RIGHT);
+		HBox topContainer = new HBox(1000, leaveGameButton, rulesButton);
+		topContainer.setAlignment(Pos.CENTER);
 		root.setTop(topContainer);
 
 		enemyBoard.setStyle("-fx-background-color: transparent;");
@@ -382,7 +396,7 @@ public class GuiClient extends Application {
 
 //Unused For now
 
-		private void enemyMove() {
+	private void enemyMove() {
 			while (enemyTurn) {
 				int x = random.nextInt(10);
 				int y = random.nextInt(10);
@@ -400,8 +414,7 @@ public class GuiClient extends Application {
 				}
 			}
 		}
-
-		private void startGame() {
+	private void startGame() {
 			// place enemy ships
 			int type = 5;
 
@@ -415,5 +428,5 @@ public class GuiClient extends Application {
 			}
 
 			running = true;
-		}//yourmom
+		}
 }

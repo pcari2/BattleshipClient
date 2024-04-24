@@ -18,3 +18,9 @@
     -fx-border-color: white;
     -fx-text-fill: white;
 }
+
+.chatListView {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-text-fill: green;
+}
+
