@@ -34,3 +34,10 @@
     -fx-arc-width: 20;
 
 }
+
+    .title-label2 {
+        -fx-font-size:200px;
+        -fx-text-fill: red;
+        -fx-font-family: Impact;
+        -fx-underline: true;
+    }

@@ -269,6 +269,7 @@ public class GuiClient extends Application {
 				if (enemyBoard.ships == 0) {
 					System.out.println("YOU WIN");
 					primaryStage.setScene(sceneMap.get("winScreen"));
+					primaryStage.setMaximized(true);
 				}
 
 				if (enemyTurn)
@@ -314,46 +315,65 @@ public class GuiClient extends Application {
 
 	private Scene createWinScreen(){
 		BorderPane root = new BorderPane();
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+
+		root.getStyleClass().add("battleship-start");
 
 		root.setPrefSize(600, 800);
 		Button returnToLobbyButton = new Button("Return to Lobby");
-		returnToLobbyButton.getStyleClass().add("rules-button");
+		returnToLobbyButton.getStyleClass().add("back-button");
+
 
 		returnToLobbyButton.setOnAction(e -> {
 			primaryStage.setScene(sceneMap.get("startScreen"));
+			primaryStage.setMaximized(true);
 		});
 		Label winLabel = new Label("YOU WIN");
-		winLabel.getStyleClass().add("title-label");
+		winLabel.getStyleClass().add("title-label2");
 
 		VBox vbox = new VBox(winLabel, returnToLobbyButton);
-		vbox.setAlignment(Pos.TOP_CENTER);
+		vbox.setAlignment(Pos.CENTER);
 
 
 		root.setCenter(vbox);
 		Scene winScene = new Scene(root);
+		winScene.getStylesheets().add("/styles/styles3.css");
 		return winScene;
 
 	}
 	private Scene createLoseScreen(){
 		BorderPane root = new BorderPane();
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+
+		root.getStyleClass().add("battleship-start");
 
 		root.setPrefSize(600, 800);
 		Button returnToLobbyButton = new Button("Return to Lobby");
-		returnToLobbyButton.getStyleClass().add("rules-button");
+		returnToLobbyButton.getStyleClass().add("back-button");
 
 		returnToLobbyButton.setOnAction(e -> {
 			primaryStage.setScene(sceneMap.get("startScreen"));
+			primaryStage.setMaximized(true);
 		});
-		Label winLabel = new Label("YOU LOSE");
-		winLabel.getStyleClass().add("title-label");
+		Label loseLabel = new Label("YOU LOSE");
+		loseLabel.getStyleClass().add("title-label2");
 
-		VBox vbox = new VBox(winLabel, returnToLobbyButton);
-		vbox.setAlignment(Pos.TOP_CENTER);
+		VBox vbox = new VBox(loseLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.CENTER);
 
 
 		root.setCenter(vbox);
-		Scene winScene = new Scene(root);
-		return winScene;
+		Scene loseScene = new Scene(root);
+		loseScene.getStylesheets().add("/styles/styles3.css");
+		return loseScene;
 
 	}
 
@@ -376,6 +396,7 @@ public class GuiClient extends Application {
 				if (playerBoard.ships == 0) {
 					System.out.println("YOU LOSE");
 					primaryStage.setScene(sceneMap.get("loseScreen"));
+					primaryStage.setMaximized(true);
 				}
 			}
 		}
