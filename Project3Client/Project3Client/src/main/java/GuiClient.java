@@ -219,8 +219,10 @@ public class GuiClient extends Application {
 										"Each move is classified as a Hit! or Miss!\nYou try to deduce where the enemy ships are and sink \nthem. " +
 										"\n\nFirst to do so wins.\n\n" +
 										"There are 5 ships, all spanning 5-2 spaces.\n\n" +
-										"Press Play Against Player to find a player.\n\n" +
-										"Press Play Against AI to play against a computer.");
+										"Press Play Against Player to find a player.\n" +
+										"Press Play Against AI to play against a computer.\n\n" +
+										"Left-Click to place Boat Vertically\n" +
+										"Right-Click to place Boat Horizontally\n\n");
 
 		ruleLabel.getStyleClass().add("title-rules");
 
@@ -393,7 +395,6 @@ public class GuiClient extends Application {
 
 	}
 
-
 	private void enemyMove() {
 			while (enemyTurn) {
 				int x = random.nextInt(10);
@@ -412,6 +413,7 @@ public class GuiClient extends Application {
 				}
 			}
 		}
+
 	private void startGame() {
 			// place enemy ships
 			int type = 5;
