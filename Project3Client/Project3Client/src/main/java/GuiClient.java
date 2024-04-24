@@ -171,7 +171,7 @@ public class GuiClient extends Application {
 
 		root.setTop(topBox);
 
-		HBox centerBox = new HBox(20); // your mom
+		HBox centerBox = new HBox(20);
 		centerBox.setAlignment(Pos.CENTER);
 		Label titleLabel = new Label("RULES");
 		titleLabel.getStyleClass().add("title-label");
