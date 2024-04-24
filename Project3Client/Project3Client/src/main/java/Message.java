@@ -16,7 +16,9 @@ public class Message implements Serializable {
         LEAVE,
         GAME_FOUND,
         LIST_OF_NAMES,
-        PLAYER_LOOKING_FOR_GAME
+        PLAYER_LOOKING_FOR_GAME,
+        USER_ID_CREATE,
+        REQUEST_USERNAME
     }
 
     private MessageType type;

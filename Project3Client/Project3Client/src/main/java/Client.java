@@ -16,12 +16,12 @@ Paolo Carino CS 342 Project 3
 
 public class Client extends Thread{
 
-	
+
 	Socket socketClient;
-	
+
 	ObjectOutputStream out;
 	ObjectInputStream in;
-	
+
 	private Consumer<Message> callback;
 	private String username;
 	boolean usernameChangeTaken = false;
@@ -29,50 +29,47 @@ public class Client extends Thread{
 	Client(Consumer<Message> call){
 		callback = call;
 	}
-	
+
 	public void run() {
-		
+
 		try {
-		socketClient= new Socket("127.0.0.1",5555);
-	    out = new ObjectOutputStream(socketClient.getOutputStream());
-	    in = new ObjectInputStream(socketClient.getInputStream());
-	    socketClient.setTcpNoDelay(true);
+			socketClient= new Socket("127.0.0.1",5555);
+			out = new ObjectOutputStream(socketClient.getOutputStream());
+			in = new ObjectInputStream(socketClient.getInputStream());
+			socketClient.setTcpNoDelay(true);
 
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
+		Message requestUserID = new Message();
+		requestUserID.setMessageType(Message.MessageType.REQUEST_USERNAME);
+		send(requestUserID);
+
 		while(true) {
-			 
-//			try {
-//				Message message = (Message) in.readObject(); // reads in message
-//
-//				// if the message is list of names, or a leave message update Connected Users
-//				if (message.getType() == Message.MessageType.LIST_OF_NAMES || message.getType() == Message.MessageType.LEAVE ) {
-//					connectedUsernames = message.getReceivers();
-//				}
-//
-//				// If username is already taken than make it true
-//				if (message.getContent().equals("Username is already taken")) {
-//					usernameChangeTaken = true;
-//				}
-//
-//				// If they're sending a username back to the Client, else then upload to ClientGUI
-//				if (message.getType() == Message.MessageType.USER_ID_CREATE && !usernameChangeTaken) {
-//					username = message.getContent();
-//				}
-//				else {
-//					callback.accept(message);
-//				}
-//			}
-//			catch(Exception e) {}
+
+			try {
+				Message message = (Message) in.readObject(); // reads in message
+
+				// If they're sending a username back to the Client, else then upload to ClientGUI
+				if (message.getType() == Message.MessageType.USER_ID_CREATE) {
+
+					username = message.getUsername();
+
+					System.out.println("Username received from server: " + username);
+				}
+				else {
+					callback.accept(message);
+				}
+			}
+			catch(Exception e) {}
 		}
-	
-    }
-	
+
+	}
+
 	public void send(Message data) {
-		
+
 		try {
 			out.writeObject(data);
 			out.flush();
@@ -85,6 +82,9 @@ public class Client extends Thread{
 		this.username = username;
 	}
 
+	public String getUsername() {
+		return username;
+	}
 	public List<String> getConnectedUsernames() {
 		return connectedUsernames;
 	}
