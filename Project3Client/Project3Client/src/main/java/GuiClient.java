@@ -54,10 +54,14 @@ public class GuiClient extends Application {
 		Scene startScene = createStartScene();
 		Scene rulesScene = createRulesScene();
 		Scene playerScene = createPlayerScene();
+		Scene winScene = createWinScreen();
+		Scene loseScene = createLoseScreen();
 
 		sceneMap.put("startScreen", startScene);
 		sceneMap.put("rulesScreen", rulesScene);
 		sceneMap.put("player", playerScene);
+		sceneMap.put("winScreen", winScene);
+		sceneMap.put("loseScreen", loseScene);
 
 		primaryStage.setScene(startScene);
 		primaryStage.setMaximized(true);
@@ -80,10 +84,6 @@ public class GuiClient extends Application {
 	}
 
 	public void handlePlayerButton() throws Exception {
-
-
-
-
 		primaryStage.setScene(sceneMap.get("player"));
 
 	}
@@ -268,7 +268,7 @@ public class GuiClient extends Application {
 
 				if (enemyBoard.ships == 0) {
 					System.out.println("YOU WIN");
-					System.exit(0);
+					primaryStage.setScene(sceneMap.get("winScreen"));
 				}
 
 				if (enemyTurn)
@@ -312,6 +312,52 @@ public class GuiClient extends Application {
 		return playerScreen;
 	}
 
+	private Scene createWinScreen(){
+		BorderPane root = new BorderPane();
+
+		root.setPrefSize(600, 800);
+		Button returnToLobbyButton = new Button("Return to Lobby");
+		returnToLobbyButton.getStyleClass().add("rules-button");
+
+		returnToLobbyButton.setOnAction(e -> {
+			primaryStage.setScene(sceneMap.get("startScreen"));
+		});
+		Label winLabel = new Label("YOU WIN");
+		winLabel.getStyleClass().add("title-label");
+
+		VBox vbox = new VBox(winLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.TOP_CENTER);
+
+
+		root.setCenter(vbox);
+		Scene winScene = new Scene(root);
+		return winScene;
+
+	}
+	private Scene createLoseScreen(){
+		BorderPane root = new BorderPane();
+
+		root.setPrefSize(600, 800);
+		Button returnToLobbyButton = new Button("Return to Lobby");
+		returnToLobbyButton.getStyleClass().add("rules-button");
+
+		returnToLobbyButton.setOnAction(e -> {
+			primaryStage.setScene(sceneMap.get("startScreen"));
+		});
+		Label winLabel = new Label("YOU LOSE");
+		winLabel.getStyleClass().add("title-label");
+
+		VBox vbox = new VBox(winLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.TOP_CENTER);
+
+
+		root.setCenter(vbox);
+		Scene winScene = new Scene(root);
+		return winScene;
+
+	}
+
+
 //--------------------------------------------------------------
 
 //Unused For now
@@ -329,7 +375,7 @@ public class GuiClient extends Application {
 
 				if (playerBoard.ships == 0) {
 					System.out.println("YOU LOSE");
-					System.exit(0);
+					primaryStage.setScene(sceneMap.get("loseScreen"));
 				}
 			}
 		}
