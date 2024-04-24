@@ -34,6 +34,7 @@ public class GuiClient extends Application {
 
 	Client clientConnection;
 	ListView<String> chatListView;
+	TextField chatInput;
 
 //-----------------------------------------------------------
 	// Unused
@@ -49,15 +50,22 @@ public class GuiClient extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
+		chatListView = new ListView<>();
+		chatListView.getStyleClass().add("chatListView");
+
 		sceneMap = new HashMap<String, Scene>(); // All the scenes
 
 		Scene startScene = createStartScene();
 		Scene rulesScene = createRulesScene();
 		Scene playerScene = createPlayerScene();
+		Scene winScreen = createWinScreen();
+		Scene loseScreen = createLoseScreen();
 
 		sceneMap.put("startScreen", startScene);
 		sceneMap.put("rulesScreen", rulesScene);
 		sceneMap.put("player", playerScene);
+		sceneMap.put("winScreen", winScreen);
+		sceneMap.put("loseScreen", loseScreen);
 
 		primaryStage.setScene(startScene);
 		primaryStage.setMaximized(true);
@@ -80,13 +88,9 @@ public class GuiClient extends Application {
 	}
 
 	public void handlePlayerButton() throws Exception {
-
-
-
-
 		primaryStage.setScene(sceneMap.get("player"));
-
 	}
+
 	public void handleAIButton() throws Exception {
 		primaryStage.setScene(sceneMap.get("player"));
 		primaryStage.setMaximized(true);
@@ -150,8 +154,8 @@ public class GuiClient extends Application {
 		Button playAgainstPlayerButton = new Button("Play Against Player");
 		playAgainstPlayerButton.getStyleClass().add("play-button");
 		playAgainstPlayerButton.setOnAction(event -> {
-			playAgainstPlayerButton.setText("Waiting for player...");
 
+			playAgainstPlayerButton.setText("Waiting for player...");
 			playAgainstPlayerButton.setDisable(true);
 			playAgainstAIButton.setDisable(true);
 			rulesButton.setDisable(true);
@@ -278,7 +282,8 @@ public class GuiClient extends Application {
 
 				if (enemyBoard.ships == 0) {
 					System.out.println("YOU WIN");
-					System.exit(0);
+					primaryStage.setScene(sceneMap.get("winScreen"));
+					primaryStage.setMaximized(true);
 				}
 
 				if (enemyTurn)
@@ -323,11 +328,73 @@ public class GuiClient extends Application {
 		return playerScreen;
 	}
 
-//--------------------------------------------------------------
+	private Scene createWinScreen(){
+		BorderPane root = new BorderPane();
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
 
-//Unused For now
+		root.setPrefSize(screenWidth, screenHeight);
 
-		private void enemyMove() {
+		root.getStyleClass().add("battleship-start");
+
+		root.setPrefSize(600, 800);
+		Button returnToLobbyButton = new Button("Return to Lobby");
+		returnToLobbyButton.getStyleClass().add("back-button");
+
+
+		returnToLobbyButton.setOnAction(e -> {
+			primaryStage.setScene(sceneMap.get("startScreen"));
+			primaryStage.setMaximized(true);
+		});
+		Label winLabel = new Label("YOU WIN");
+		winLabel.getStyleClass().add("title-label2");
+
+		VBox vbox = new VBox(winLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.CENTER);
+
+
+		root.setCenter(vbox);
+		Scene winScene = new Scene(root);
+		winScene.getStylesheets().add("/styles/styles3.css");
+		return winScene;
+
+	}
+
+	private Scene createLoseScreen(){
+		BorderPane root = new BorderPane();
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+
+		root.getStyleClass().add("battleship-start");
+
+		root.setPrefSize(600, 800);
+		Button returnToLobbyButton = new Button("Return to Lobby");
+		returnToLobbyButton.getStyleClass().add("back-button");
+
+		returnToLobbyButton.setOnAction(e -> {
+			primaryStage.setScene(sceneMap.get("startScreen"));
+			primaryStage.setMaximized(true);
+		});
+		Label loseLabel = new Label("YOU LOSE");
+		loseLabel.getStyleClass().add("title-label2");
+
+		VBox vbox = new VBox(loseLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.CENTER);
+
+
+		root.setCenter(vbox);
+		Scene loseScene = new Scene(root);
+		loseScene.getStylesheets().add("/styles/styles3.css");
+		return loseScene;
+
+	}
+
+
+	private void enemyMove() {
 			while (enemyTurn) {
 				int x = random.nextInt(10);
 				int y = random.nextInt(10);
@@ -340,12 +407,12 @@ public class GuiClient extends Application {
 
 				if (playerBoard.ships == 0) {
 					System.out.println("YOU LOSE");
-					System.exit(0);
+					primaryStage.setScene(sceneMap.get("loseScreen"));
+					primaryStage.setMaximized(true);
 				}
 			}
 		}
-
-		private void startGame() {
+	private void startGame() {
 			// place enemy ships
 			int type = 5;
 
@@ -359,11 +426,5 @@ public class GuiClient extends Application {
 			}
 
 			running = true;
-		}
-
-		private void resetGame() {
-			running = false;
-			shipsToPlace = 5;
-			enemyTurn = false;
 		}
 }
