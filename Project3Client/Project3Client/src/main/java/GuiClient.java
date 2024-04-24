@@ -102,6 +102,14 @@ public class GuiClient extends Application {
 		primaryStage.setMaximized(true);
 	}
 
+	public void handleLeaveGameButton() throws Exception {
+		sceneMap.remove("player");
+		Scene newScene = createPlayerScene();
+		sceneMap.put("player", newScene);
+		primaryStage.setScene(sceneMap.get("startScreen"));
+		primaryStage.setMaximized(true);
+	}
+
 	private Scene createStartScene() {
 		BorderPane root = new BorderPane();
 		Screen screen = Screen.getPrimary();
@@ -248,10 +256,12 @@ public class GuiClient extends Application {
 			}
 		});
 
-		leaveGameButton.setOnAction(e -> {
-			primaryStage.setScene(sceneMap.get("startScreen"));
-
-
+		leaveGameButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		});
 
 
@@ -288,9 +298,10 @@ public class GuiClient extends Application {
 				}
 		});
 
-		HBox topContainer = new HBox(rulesButton);
-		topContainer.setAlignment(Pos.CENTER_RIGHT);
+		HBox topContainer = new HBox(1000, leaveGameButton, rulesButton);
+		topContainer.setAlignment(Pos.CENTER);
 		root.setTop(topContainer);
+
 
 		enemyBoard.setStyle("-fx-background-color: transparent;");
 		playerBoard.setStyle("-fx-background-color: transparent;");
@@ -348,5 +359,11 @@ public class GuiClient extends Application {
 			}
 
 			running = true;
+		}
+
+		private void resetGame() {
+			running = false;
+			shipsToPlace = 5;
+			enemyTurn = false;
 		}
 }
