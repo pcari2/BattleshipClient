@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.List;
 import java.util.function.Consumer;
+import javafx.application.Platform;
 
 /*
 Paolo Carino CS 342 Project 3
@@ -26,6 +27,7 @@ public class Client extends Thread{
 	private String username;
 	boolean usernameChangeTaken = false;
 	List<String> connectedUsernames;
+	GuiClient guiClient;
 	Client(Consumer<Message> call){
 		callback = call;
 	}
@@ -43,27 +45,16 @@ public class Client extends Thread{
 			e.printStackTrace();
 		}
 
-		Message requestUserID = new Message();
-		requestUserID.setMessageType(Message.MessageType.REQUEST_USERNAME);
-		send(requestUserID);
+		Message requestID = new Message();
+		requestID.setMessageType(Message.MessageType.REQUEST_USERNAME);
+		send(requestID);
 
 		while(true) {
 
 			try {
-				Message message = (Message) in.readObject(); // reads in message
-
-				// If they're sending a username back to the Client, else then upload to ClientGUI
-				if (message.getType() == Message.MessageType.USER_ID_CREATE) {
-
-					username = message.getUsername();
-
-					System.out.println("Username received from server: " + username);
-				}
-				else {
-					callback.accept(message);
-				}
-			}
-			catch(Exception e) {}
+				Message message = (Message) in.readObject();
+				callback.accept(message);
+			} catch(Exception e) {}
 		}
 
 	}

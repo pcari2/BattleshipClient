@@ -30,6 +30,8 @@ public class GuiClient extends Application {
 	private Stage primaryStage;
 	private Board enemyBoard, playerBoard;
 	private Scene previousScene;
+	public boolean isGameFound = false;
+
 
 	Client clientConnection;
 	ListView<String> chatListView;
@@ -40,6 +42,7 @@ public class GuiClient extends Application {
 	private int shipsToPlace = 5;
 	private boolean enemyTurn = false;
 	private Random random = new Random();
+	private String username;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -53,10 +56,12 @@ public class GuiClient extends Application {
 		Scene startScene = createStartScene();
 		Scene rulesScene = createRulesScene();
 		Scene playerScene = createPlayerScene();
+		Scene OnlinePlayerScene = createOnlinePlayerScene();
 
 		sceneMap.put("startScreen", startScene);
 		sceneMap.put("rulesScreen", rulesScene);
 		sceneMap.put("player", playerScene);
+		sceneMap.put("onlinePlayer", OnlinePlayerScene);
 
 		primaryStage.setScene(startScene);
 		primaryStage.setMaximized(true);
@@ -64,7 +69,8 @@ public class GuiClient extends Application {
 		primaryStage.show();
 
 		clientConnection = new Client(data-> {
-			chatListView.getItems().add(data.toString());
+//			chatListView.getItems().add(data.toString());
+			HandleResponse(data);
 		});
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -80,6 +86,7 @@ public class GuiClient extends Application {
 
 	public void handlePlayerButton() throws Exception {
 		primaryStage.setScene(sceneMap.get("player"));
+		primaryStage.setMaximized(true);
 
 	}
 	public void handleAIButton() throws Exception {
@@ -150,7 +157,6 @@ public class GuiClient extends Application {
 					message.setMessageType(Message.MessageType.PLAYER_LOOKING_FOR_GAME);
 					message.setUsername(clientConnection.getUsername());
 					clientConnection.send(message);
-					System.out.println(clientConnection.getUsername());
 				} else {
 					System.err.println("Client connection is null.");
 				}
@@ -316,6 +322,93 @@ public class GuiClient extends Application {
 		return playerScreen;
 	}
 
+	private Scene createOnlinePlayerScene() {
+
+		BorderPane root = new BorderPane();
+
+		root.setPrefSize(600, 800);
+		root.getStyleClass().add("battleship-start");
+
+		Button rulesButton =  new Button("Rules");
+		Button leaveGameButton = new Button("Leave Game");
+
+		rulesButton.getStyleClass().add("rules-button");
+		leaveGameButton.getStyleClass().add("rules-button");
+
+		rulesButton.setOnAction(event -> {
+			previousScene = primaryStage.getScene();
+
+			try {
+				handleRulesButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		leaveGameButton.setOnAction(e -> {
+			primaryStage.setScene(sceneMap.get("startScreen"));
+
+
+		});
+
+
+
+		enemyBoard = new Board(true, event -> {
+			if (!running)
+				return;
+
+			Board.Cell cell = (Board.Cell) event.getSource();
+			if (cell.wasShot)
+				return;
+
+			enemyTurn = !cell.shoot();
+
+			if (enemyBoard.ships == 0) {
+				System.out.println("YOU WIN");
+				System.exit(0);
+			}
+
+			if (enemyTurn)
+				enemyMove();
+		});
+
+		playerBoard = new Board(false, event -> {
+
+			if (running)
+				return;
+
+			Board.Cell cell = (Board.Cell) event.getSource();
+			if (playerBoard.placeShip(new Ship(shipsToPlace, event.getButton() == MouseButton.PRIMARY), cell.x, cell.y)) {
+				if (--shipsToPlace == 0) {
+					// Send message to server that says player placed all ships
+				}
+			}
+		});
+
+		HBox topContainer = new HBox(rulesButton);
+		topContainer.setAlignment(Pos.CENTER_RIGHT);
+		root.setTop(topContainer);
+
+		enemyBoard.setStyle("-fx-background-color: transparent;");
+		playerBoard.setStyle("-fx-background-color: transparent;");
+
+		VBox vbox = new VBox(35, enemyBoard, playerBoard);
+		vbox.setAlignment(Pos.TOP_CENTER);
+
+		root.setCenter(vbox);
+
+
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+		Scene playerScreen = new Scene(root);
+		playerScreen.getStylesheets().add("/styles/styles2.css");
+
+		return playerScreen;
+	}
+
 
 //--------------------------------------------------------------
 
@@ -354,4 +447,21 @@ public class GuiClient extends Application {
 
 		running = true;
 	}
+
+	public void HandleResponse(Message data) {
+		Message message = data; // reads in message
+
+		// If they're sending a username back to the Client, else then upload to ClientGUI
+		if (message.getType() == Message.MessageType.USER_ID_CREATE) {
+			clientConnection.setUsername(message.getUsername());
+			System.out.println("Username received from server: " + clientConnection.getUsername());
+		} else if (message.getType() == Message.MessageType.GAME_FOUND) {
+			System.out.println("Game Found!");
+			Platform.runLater(() -> primaryStage.setScene(sceneMap.get("onlinePlayer")));
+		} else if () { // Message type is BOTH_PLAYERS_READY
+			
+		}
+	}
+
+
 }
