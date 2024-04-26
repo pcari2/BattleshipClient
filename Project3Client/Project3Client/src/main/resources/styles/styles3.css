@@ -13,7 +13,7 @@
 }
 
 .battleship-start {
-    -fx-background-image:url("/images/battleship-rules.jpg");
+    -fx-background-image:url("/Project3Client/src/main/resources/images/battleship-rules.jpg");
     -fx-background-size: cover;
     -fx-background-position: center;
 }
@@ -34,3 +34,9 @@
     -fx-arc-width: 20;
 
 }
+    .title-label2 {
+        -fx-font-size:200px;
+        -fx-text-fill: red;
+        -fx-font-family: Impact;
+        -fx-underline: true;
+    }

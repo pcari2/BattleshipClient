@@ -18,6 +18,8 @@ public class Board extends Parent {
     private VBox rows = new VBox();
     private boolean isEnemy = false;
     public int ships = 5;
+    private Ship[][] grid;
+
 
 
     public Board(boolean isEnemy, EventHandler<? super MouseEvent> handler) {
@@ -38,6 +40,22 @@ public class Board extends Parent {
 
         // Add rows to the Parent to display it
         getChildren().add(rows);
+    }
+
+    public void setShip(int x, int y, Ship ship) {
+        grid[x][y] = ship;
+    }
+
+    protected VBox getRows() {
+        return rows;
+    }
+
+    public boolean shootCell(int x, int y) {
+        Cell cell = getCell(x, y);
+        if (!cell.wasShot) { // Check if the cell hasn't been shot before
+            return cell.shoot(); // Shoot the cell and return the result
+        }
+        return false; // Cell was already shot
     }
 
     public boolean placeShip(Ship ship, int x, int y) {
@@ -153,6 +171,21 @@ public class Board extends Parent {
         return x >= 0 && x < 10 && y >= 0 && y < 10;
     }
 
+    public String serializeBoardState() {
+        StringBuilder boardState = new StringBuilder();
+
+        // Iterate over each cell in the board
+        for (int y = 0; y < 10; y++) {
+            for (int x = 0; x < 10; x++) {
+                Cell cell = getCell(x, y);
+                char cellState = cell.ship != null ? 'S' : 'E'; // 'S' for ship, 'E' for empty
+                boardState.append(cellState);
+            }
+        }
+
+        return boardState.toString();
+    }
+
     public class Cell extends Rectangle {
         public int x, y;
         public Ship ship = null;
@@ -170,6 +203,10 @@ public class Board extends Parent {
 
             Color lightColor = Color.rgb(255, 255, 255, 0.6);
             setFill(lightColor);
+        }
+        public void setShip() {
+            ship = new Ship(1, false);
+            return;
         }
 
         public boolean shoot() {

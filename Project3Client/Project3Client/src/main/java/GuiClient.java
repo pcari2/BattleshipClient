@@ -22,14 +22,17 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 
 public class GuiClient extends Application {
 
 
 	private HashMap<String, Scene> sceneMap;
 	private Stage primaryStage;
-	private Board enemyBoard, playerBoard;
+	private Board enemyBoard, playerBoard, onlinePlayerBoard, opponentBoard;
 	private Scene previousScene;
+	private Board board;
+	private String boardString = "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE";
 	public boolean isGameFound = false;
 
 
@@ -56,12 +59,17 @@ public class GuiClient extends Application {
 		Scene startScene = createStartScene();
 		Scene rulesScene = createRulesScene();
 		Scene playerScene = createPlayerScene();
+		Scene winScene = createWinScreen();
+		Scene loseScene = createLoseScreen();
 		Scene OnlinePlayerScene = createOnlinePlayerScene();
 
 		sceneMap.put("startScreen", startScene);
 		sceneMap.put("rulesScreen", rulesScene);
 		sceneMap.put("player", playerScene);
+		sceneMap.put("winScreen", winScene);
+		sceneMap.put("loseScreen", loseScene);
 		sceneMap.put("onlinePlayer", OnlinePlayerScene);
+
 
 		primaryStage.setScene(startScene);
 		primaryStage.setMaximized(true);
@@ -103,6 +111,18 @@ public class GuiClient extends Application {
 		primaryStage.setScene(previousScene);
 		primaryStage.setMaximized(true);
 	}
+
+	public void handleLeaveGameButton() throws Exception {
+		sceneMap.remove("player");
+		Scene newScene = createPlayerScene();
+		sceneMap.put("player", newScene);
+		running = false;
+		shipsToPlace = 5;
+		enemyTurn = false;
+		primaryStage.setScene(sceneMap.get("startScreen"));
+		primaryStage.setMaximized(true);
+	}
+
 
 	private Scene createStartScene() {
 		BorderPane root = new BorderPane();
@@ -258,15 +278,25 @@ public class GuiClient extends Application {
 			}
 		});
 
-		leaveGameButton.setOnAction(e -> {
-			primaryStage.setScene(sceneMap.get("startScreen"));
-
-
+		leaveGameButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		});
 
 
 
 		enemyBoard = new Board(true, event -> {
+
+			for (int i = 0; i < 5; i++) {
+				int x = (int) (Math.random() * 10);
+				int y = (int) (Math.random() * 10);
+				boolean horizontal = Math.random() < 0.5;
+				enemyBoard.placeShip(new Ship(5 - i, horizontal), x, y);
+			}
+
 			if (!running)
 				return;
 
@@ -278,7 +308,8 @@ public class GuiClient extends Application {
 
 			if (enemyBoard.ships == 0) {
 				System.out.println("YOU WIN");
-				System.exit(0);
+				primaryStage.setScene(sceneMap.get("winScreen"));
+				primaryStage.setMaximized(true);
 			}
 
 			if (enemyTurn)
@@ -292,14 +323,15 @@ public class GuiClient extends Application {
 
 			Board.Cell cell = (Board.Cell) event.getSource();
 			if (playerBoard.placeShip(new Ship(shipsToPlace, event.getButton() == MouseButton.PRIMARY), cell.x, cell.y)) {
+				System.out.print(shipsToPlace);
 				if (--shipsToPlace == 0) {
 					startGame();
 				}
 			}
 		});
 
-		HBox topContainer = new HBox(rulesButton);
-		topContainer.setAlignment(Pos.CENTER_RIGHT);
+		HBox topContainer = new HBox(1000, leaveGameButton, rulesButton);
+		topContainer.setAlignment(Pos.CENTER);
 		root.setTop(topContainer);
 
 		enemyBoard.setStyle("-fx-background-color: transparent;");
@@ -322,14 +354,83 @@ public class GuiClient extends Application {
 		return playerScreen;
 	}
 
-	private Scene createOnlinePlayerScene() {
+	private Scene createWinScreen(){
+		BorderPane root = new BorderPane();
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
 
+		root.setPrefSize(screenWidth, screenHeight);
+
+		root.getStyleClass().add("battleship-start");
+
+		root.setPrefSize(600, 800);
+		Button returnToLobbyButton = new Button("Return to Lobby");
+		returnToLobbyButton.getStyleClass().add("back-button");
+
+
+		returnToLobbyButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+		Label winLabel = new Label("YOU WIN");
+		winLabel.getStyleClass().add("title-label2");
+
+		VBox vbox = new VBox(winLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.CENTER);
+
+
+		root.setCenter(vbox);
+		Scene winScene = new Scene(root);
+		winScene.getStylesheets().add("/styles/styles3.css");
+		return winScene;
+
+	}
+	private Scene createLoseScreen(){
+		BorderPane root = new BorderPane();
+		Screen screen = Screen.getPrimary();
+		double screenWidth = screen.getBounds().getWidth();
+		double screenHeight = screen.getBounds().getHeight();
+
+		root.setPrefSize(screenWidth, screenHeight);
+
+		root.getStyleClass().add("battleship-start");
+
+		root.setPrefSize(600, 800);
+		Button returnToLobbyButton = new Button("Return to Lobby");
+		returnToLobbyButton.getStyleClass().add("back-button");
+
+		returnToLobbyButton.setOnAction(event -> {
+			try {
+				handleLeaveGameButton();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+		Label loseLabel = new Label("YOU LOSE");
+		loseLabel.getStyleClass().add("title-label2");
+
+		VBox vbox = new VBox(loseLabel, returnToLobbyButton);
+		vbox.setAlignment(Pos.CENTER);
+
+
+		root.setCenter(vbox);
+		Scene loseScene = new Scene(root);
+		loseScene.getStylesheets().add("/styles/styles3.css");
+		return loseScene;
+
+	}
+
+	private Scene createOnlinePlayerScene() {
 		BorderPane root = new BorderPane();
 
 		root.setPrefSize(600, 800);
 		root.getStyleClass().add("battleship-start");
 
-		Button rulesButton =  new Button("Rules");
+		Button rulesButton = new Button("Rules");
 		Button leaveGameButton = new Button("Leave Game");
 
 		rulesButton.getStyleClass().add("rules-button");
@@ -337,7 +438,6 @@ public class GuiClient extends Application {
 
 		rulesButton.setOnAction(event -> {
 			previousScene = primaryStage.getScene();
-
 			try {
 				handleRulesButton();
 			} catch (Exception e) {
@@ -347,40 +447,57 @@ public class GuiClient extends Application {
 
 		leaveGameButton.setOnAction(e -> {
 			primaryStage.setScene(sceneMap.get("startScreen"));
-
-
 		});
 
-
-
-		enemyBoard = new Board(true, event -> {
+		opponentBoard = new OpponentBoard(boardString, event -> {
 			if (!running)
 				return;
-
 			Board.Cell cell = (Board.Cell) event.getSource();
-			if (cell.wasShot)
-				return;
-
-			enemyTurn = !cell.shoot();
-
-			if (enemyBoard.ships == 0) {
-				System.out.println("YOU WIN");
-				System.exit(0);
+			int x = cell.x;
+			int y = cell.y;
+			// Handle the logic for shooting the opponent's cell
+			boolean hit = cell.shoot();
+			System.out.println(hit);
+			if (hit) {
+				// If a ship is hit, handle any additional logic here
+				// For example, check if the opponent has lost all ships and end the game if necessary
+				if (opponentBoard.ships == 0) {
+					System.out.println("YOU WIN");
+					Message winMessage = new Message();
+					winMessage.setMessageType(Message.MessageType.WINNER_WINNER_CHICKEN_DINNER);
+					clientConnection.send(winMessage);
+					primaryStage.setScene(sceneMap.get("winScreen"));
+					primaryStage.setMaximized(true);
+				} else {
+					// If the opponent still has ships remaining, handle any other game logic here
+					// For example, continue the game or switch turns
+				}
+			} else {
+				// If the shot misses, handle any additional logic here
+				// For example, switch turns or update the GUI
 			}
-
-			if (enemyTurn)
-				enemyMove();
+			Message moveMessage = new Message();
+			moveMessage.setMessageType(Message.MessageType.REGULAR_MOVE);
+			moveMessage.setUsername(clientConnection.getUsername());
+			moveMessage.setX(x);
+			moveMessage.setY(y);
+			clientConnection.send(moveMessage);
+			System.out.print("Move message sent from " + clientConnection.getUsername() + "\n");
+			// Handle any other game logic here, such as switching turns or updating the GUI
 		});
 
-		playerBoard = new Board(false, event -> {
-
+		onlinePlayerBoard = new Board(false, event -> {
 			if (running)
 				return;
-
 			Board.Cell cell = (Board.Cell) event.getSource();
-			if (playerBoard.placeShip(new Ship(shipsToPlace, event.getButton() == MouseButton.PRIMARY), cell.x, cell.y)) {
+			if (onlinePlayerBoard.placeShip(new Ship(shipsToPlace, event.getButton() == MouseButton.PRIMARY), cell.x, cell.y)) {
 				if (--shipsToPlace == 0) {
 					// Send message to server that says player placed all ships
+					Message boardMessage = createBoardMessage(onlinePlayerBoard);
+					boardMessage.setUsername(clientConnection.getUsername());
+					// Send the message to the server
+					System.out.println("Board Sent to Server from " + clientConnection.getUsername());
+					clientConnection.send(boardMessage);
 				}
 			}
 		});
@@ -389,25 +506,25 @@ public class GuiClient extends Application {
 		topContainer.setAlignment(Pos.CENTER_RIGHT);
 		root.setTop(topContainer);
 
-		enemyBoard.setStyle("-fx-background-color: transparent;");
-		playerBoard.setStyle("-fx-background-color: transparent;");
+		opponentBoard.setStyle("-fx-background-color: transparent;");
+		onlinePlayerBoard.setStyle("-fx-background-color: transparent;");
 
-		VBox vbox = new VBox(35, enemyBoard, playerBoard);
+		VBox vbox = new VBox(35, opponentBoard, onlinePlayerBoard);
 		vbox.setAlignment(Pos.TOP_CENTER);
 
 		root.setCenter(vbox);
-
 
 		Screen screen = Screen.getPrimary();
 		double screenWidth = screen.getBounds().getWidth();
 		double screenHeight = screen.getBounds().getHeight();
 
 		root.setPrefSize(screenWidth, screenHeight);
-		Scene playerScreen = new Scene(root);
-		playerScreen.getStylesheets().add("/styles/styles2.css");
+		Scene onlinePlayerScreen = new Scene(root);
+		onlinePlayerScreen.getStylesheets().add("/styles/styles2.css");
 
-		return playerScreen;
+		return onlinePlayerScreen;
 	}
+
 
 
 //--------------------------------------------------------------
@@ -427,7 +544,8 @@ public class GuiClient extends Application {
 
 			if (playerBoard.ships == 0) {
 				System.out.println("YOU LOSE");
-				System.exit(0);
+				primaryStage.setScene(sceneMap.get("loseScreen"));
+				primaryStage.setMaximized(true);
 			}
 		}
 	}
@@ -440,7 +558,7 @@ public class GuiClient extends Application {
 			int x = random.nextInt(10);
 			int y = random.nextInt(10);
 
-			if (enemyBoard.placeShip(new Ship(type, Math.random() < 0.5), x, y)) {
+			if (opponentBoard.placeShip(new Ship(type, Math.random() < 0.5), x, y)) {
 				type--;
 			}
 		}
@@ -458,10 +576,41 @@ public class GuiClient extends Application {
 		} else if (message.getType() == Message.MessageType.GAME_FOUND) {
 			System.out.println("Game Found!");
 			Platform.runLater(() -> primaryStage.setScene(sceneMap.get("onlinePlayer")));
-		} else if () { // Message type is BOTH_PLAYERS_READY
-			
+		} else if (message.getType() == Message.MessageType.START_BOARD){
+			// create opponent board using the message content
+			boardString = message.getContent(); // Get the board string from the message content
+			OpponentBoard opponentBoard = createOpponentBoard(boardString); // Create the opponent's board using the board string
+			System.out.println(boardString);
+
+			// Start the game or update the GUI with the opponent's board
+			startOnlineGame();
+		} else if (message.getType() == Message.MessageType.REGULAR_MOVE) {
+
+			// Update the client's board with the opponent's move
+			boolean hit = onlinePlayerBoard.shootCell(message.getX(), message.getY());
+			System.out.println("Sent move from " + clientConnection.getUsername());
 		}
 	}
 
+	private void startOnlineGame() {
+		running = true;
+	}
 
+	private Message createBoardMessage(Board board) {
+		// Create a new message with the board information
+		Message message = new Message();
+		message.setMessageType(Message.MessageType.START_BOARD);
+
+		// Convert the board state into a format suitable for sending
+		// For example, you might serialize the board state into a string
+		// and set it as the message content
+		String boardState = board.serializeBoardState(); // Removed the argument
+		message.setContent(boardState);
+
+		return message;
+	}
+	private OpponentBoard createOpponentBoard(String boardString) {
+		return new OpponentBoard(boardString, event -> {
+		});
+	}
 }
